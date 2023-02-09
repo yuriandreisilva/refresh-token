@@ -1,5 +1,19 @@
-import express from 'express'
+import "express-async-errors";
+import express, { Request, Response, NextFunction } from "express";
+import { router } from "./routes";
 
-const app = express() 
+const PORT = process.env.PORT || 3050;
+const app = express();
 
-app.listen(3050, () => console.log("Server is running on port 3050"))
+app.use(express.json());
+
+app.use(router);
+
+app.use((error: Error, _: Request, response: Response, next: NextFunction) => {
+  return response.status(500).json({
+    status: "Error",
+    message: error.message,
+  });
+});
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
