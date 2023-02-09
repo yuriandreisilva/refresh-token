@@ -35,7 +35,7 @@ export class AuthenticateUserUseCase {
     /*
      * Generate token in JWT
      */
-    const token = sign({}, "71b876d3-9a4a-4c40-b8f1-f5d9bc98e8db", {
+    const token = sign({}, process.env.SECRET, {
       subject: userAlreadyExists.id,
       expiresIn: "20s",
     });
