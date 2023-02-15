@@ -1,6 +1,8 @@
 import { compare } from "bcryptjs";
 import { sign } from "jsonwebtoken";
 import { client } from "../../prisma/client";
+import { GenerateRefreshToken } from "../../provider/GenerateRefreshToken";
+import { GenerateTokenProvider } from "../../provider/GenerateTokenProvider";
 
 interface IRequest {
   username: string;
@@ -35,11 +37,20 @@ export class AuthenticateUserUseCase {
     /*
      * Generate token in JWT
      */
-    const token = sign({}, process.env.SECRET, {
-      subject: userAlreadyExists.id,
-      expiresIn: "20s",
+    const generateTokenProvider = new GenerateTokenProvider();
+    const token = await generateTokenProvider.execute(userAlreadyExists.id);
+
+    await client.refreshToken.deleteMany({
+      where: {
+        userId: userAlreadyExists.id,
+      },
     });
 
-    return { token };
+    const generateRefreshToken = new GenerateRefreshToken();
+    const refreshToken = await generateRefreshToken.execute(
+      userAlreadyExists.id
+    );
+
+    return { token, refreshToken };
   }
 }

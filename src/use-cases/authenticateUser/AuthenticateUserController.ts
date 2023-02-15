@@ -3,7 +3,6 @@ import { AuthenticateUserUseCase } from "./AuthenticateUserUseCase";
 
 export class AuthenticateUserController {
   async handle(request: Request, response: Response) {
-    console.log("entrando");
     const { username, password } = request.body;
 
     const authenticateUserUseCase = new AuthenticateUserUseCase();
